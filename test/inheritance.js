@@ -3,7 +3,7 @@ var assert = require('assert'),
 
 exports['test Self#intialization'] = function () {
     assert.equal(typeof Self, 'function');
-    assert.equal(Self.VERSION, '0.1.0');
+    assert.equal(Self.VERSION, '0.1.1');
 
     assert.equal(typeof Self.extend, 'function');
     assert.equal(typeof Self.mixin, 'function');
