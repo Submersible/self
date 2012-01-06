@@ -1,4 +1,4 @@
-# Self - Phython inspired class sugar!
+# Self - Python inspired class sugar!
 
 ## Why another OOP abstraction?
 
