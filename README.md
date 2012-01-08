@@ -7,6 +7,21 @@ continuation-passing style.  No more `var this = that;`!  The implicit `this`
 variable is changed to an explicit `self` variable that your inner functions
 inherit.  Self plays nicely with exisiting prototypal, and Backbone OOP.
 
+        var Timer = Self(EventEmitter, {
+            count: 0,
+            initialize: function (self, interval) {
+                Timer.__super__.call(self);
+
+                setInterval(function () {
+                    self.tick();
+                }, interval);
+            },
+            tick: function (self) {
+                self.count += 1;
+                self.emit('tick', self.count);
+            }
+        });
+
 ## Documentation
 
 ### Inheritance
