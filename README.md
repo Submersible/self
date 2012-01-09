@@ -132,8 +132,8 @@ class definition.
 
 ### Backbone
 
-        var SelfView = Self(Backbone.View.prototype, {
-            initialize: function (self) {
-                SelfView.__super__.initialize.call(self);
+        var MyModel = Self(Backbone.Model, {
+            initialize: function (self, attr, opts) {
+                MyModel.__super__.initialize.call(self, attr, opts);
             }
         });

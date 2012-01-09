@@ -1,9 +1,10 @@
 var assert = require('assert'),
-    Self = require('../lib/self');
+    Self = require('../lib/self'),
+    Backbone = require('backbone');
 
 exports['test Self#intialization'] = function () {
     assert.equal(typeof Self, 'function');
-    assert.equal(Self.VERSION, '0.1.1');
+    assert.equal(Self.VERSION, '0.1.2');
 
     assert.equal(typeof Self.extend, 'function');
     assert.equal(typeof Self.mixin, 'function');
@@ -216,4 +217,51 @@ exports['test Self#mixins'] = function () {
     assert.equal(foo.c, 'c3');
     assert.equal(foo.d, 'd4');
     assert.equal(foo.e, 'e5');
+};
+
+exports['test Self#backbone'] = function () {
+    var MyModel = Backbone.Model.extend({
+        initialize: function (attr, opts) {
+            this.c = opts.c;
+            this.d = opts.d;
+        }
+    });
+
+    var model = new MyModel({a: 'a1', b: 'b2'}, {c: 'c3', d: 'd4'});
+    assert.equal(model.attributes.a, 'a1');
+    assert.equal(model.attributes.b, 'b2');
+    assert.equal(model.c, 'c3');
+    assert.equal(model.d, 'd4');
+
+    var MySelfModel = Self(MyModel, {
+        initialize: function (self, attr, opts) {
+            MySelfModel.__super__.initialize.call(self, attr, opts);
+            self.e = opts.e;
+            self.f = opts.f;
+        }
+    });
+
+    var self_model = new MySelfModel({a: 'a1', b: 'b2'},
+        {c: 'c3', d: 'd4', e: 'e5', f: 'f6'});
+    assert.equal(self_model.attributes.a, 'a1');
+    assert.equal(self_model.attributes.b, 'b2');
+    assert.equal(self_model.c, 'c3');
+    assert.equal(self_model.d, 'd4');
+    assert.equal(self_model.e, 'e5');
+    assert.equal(self_model.f, 'f6');
+
+
+    var BlankModel = Self(Backbone.Model, {
+        initialize: function (self, attr, opts) {
+            MySelfModel.__super__.initialize.call(self, attr, opts);
+            self.c = opts.c;
+            self.d = opts.d;
+        }
+    });
+    
+    var blank_model = BlankModel({a: 'a1', b: 'b2'}, {c: 'c3', d: 'd4'});
+    assert.equal(blank_model.attributes.a, 'a1');
+    assert.equal(blank_model.attributes.b, 'b2');
+    assert.equal(blank_model.c, 'c3');
+    assert.equal(blank_model.d, 'd4');
 };
