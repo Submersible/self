@@ -92,7 +92,7 @@ Mixins can be used for multiple inheritance.  To mixin a object of properties
 (not a class), call `<Class>.mixin(object)`.  When mixing in, only properties
 not already in the existing class will be copied in.
 
-    var Foo = Class({
+    var Foo = Self({
         _foo: 'foo',
         initialize: function (self) {
             console.log('Foo has been mixed in to: ' + self.name + '!');
@@ -105,7 +105,7 @@ not already in the existing class will be copied in.
         }
     });
 
-    var Bar = Class({
+    var Bar = Self({
         initialize: function (self) {
             Foo.call(self);
         }
