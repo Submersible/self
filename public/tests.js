@@ -6,7 +6,7 @@ $(document).ready(function () {
 
     test('Self intialization', function () {
         equal(typeof Self, 'function');
-        equal(Self.VERSION, '0.2.0');
+        equal(Self.VERSION, '0.2.1');
 
         equal(typeof Self.extend, 'function');
         equal(typeof Self.mixin, 'function');

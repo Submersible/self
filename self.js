@@ -1,4 +1,4 @@
-/* Self v0.2.0 https://github.com/munro/self
+/* Self v0.2.1 https://github.com/munro/self
  * https://github.com/munro/self/blob/master/LICENSE */
 
 /*jslint browser: true, nomen: true, forin: true */
@@ -13,7 +13,7 @@ var Self = (function () {
         return Self.extend.apply(Self, arguments);
     }
 
-    Self.VERSION = '0.2.0';
+    Self.VERSION = '0.2.1';
 
     // Create a new object based on the old one
     // http://javascript.crockford.com/prototypal.html

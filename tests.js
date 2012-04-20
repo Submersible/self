@@ -2,42 +2,43 @@
 
 'use strict';
 
-var assert = require('assert'),
+var Backbone = require('backbone'),
     Self = require('./self'),
-    Backbone = require('backbone');
+    test = require('tap').test;
 
-exports['test Self#intialization'] = function () {
-    assert.equal(typeof Self, 'function');
-    assert.equal(Self.VERSION, '0.2.0');
+test('test Self#intialization', function (t) {
+    t.equal(typeof Self, 'function');
+    t.equal(Self.VERSION, '0.2.1');
 
-    assert.equal(typeof Self.extend, 'function');
-    assert.equal(typeof Self.mixin, 'function');
-    assert.equal(typeof Self.create, 'function');
+    t.equal(typeof Self.extend, 'function');
+    t.equal(typeof Self.mixin, 'function');
+    t.equal(typeof Self.create, 'function');
 
-    assert.equal(Self.__super__, Object.prototype);
-};
+    t.equal(Self.__super__, Object.prototype);
+    t.end();
+});
 
-exports['test Self#noInheritence'] = function () {
+test('test Self#noInheritence', function (t) {
     var def = {
         _property: 123,
         initialize: function (self, a, b, c) {
-            assert.equal(this, self);
-            assert.equal(a, 'a1');
-            assert.equal(b, 'b2');
-            assert.equal(c, 'c3');
-            assert.equal(self._property, 123);
-            assert.equal(self._another_property, 321);
+            t.equal(this, self);
+            t.equal(a, 'a1');
+            t.equal(b, 'b2');
+            t.equal(c, 'c3');
+            t.equal(self._property, 123);
+            t.equal(self._another_property, 321);
             self.a = a;
             self.b = b;
             self.c = c;
         },
         _another_property: 321,
         getA: function (self) {
-            assert.equal(this, self);
+            t.equal(this, self);
             return self.a;
         },
         setA: function (self, a) {
-            assert.equal(this, self);
+            t.equal(this, self);
             self.a = a;
             return self.a;
         }
@@ -46,23 +47,23 @@ exports['test Self#noInheritence'] = function () {
     var Foo = Self.extend(def),
         Bar = Self(def);
 
-    assert.equal(typeof Foo, 'function');
-    assert.equal(typeof Bar, 'function');
-    assert.equal(typeof Foo.extend, 'function');
-    assert.equal(typeof Bar.extend, 'function');
-    assert.equal(typeof Foo.mixin, 'function');
-    assert.equal(typeof Bar.mixin, 'function');
-    assert.equal(typeof Foo.create, 'undefined');
-    assert.equal(typeof Bar.create, 'undefined');
-    assert.equal(Foo.__super__, Self.prototype);
-    assert.equal(Bar.__super__, Self.prototype);
+    t.equal(typeof Foo, 'function');
+    t.equal(typeof Bar, 'function');
+    t.equal(typeof Foo.extend, 'function');
+    t.equal(typeof Bar.extend, 'function');
+    t.equal(typeof Foo.mixin, 'function');
+    t.equal(typeof Bar.mixin, 'function');
+    t.equal(typeof Foo.create, 'undefined');
+    t.equal(typeof Bar.create, 'undefined');
+    t.equal(Foo.__super__, Self.prototype);
+    t.equal(Bar.__super__, Self.prototype);
 
     function testFoobarInstance(obj) {
-        assert.equal(typeof obj.getA, 'function');
-        assert.equal(typeof obj.setA, 'function');
-        assert.equal(obj.getA(), 'a1');
-        assert.equal(obj.setA('foo'), 'foo');
-        assert.equal(obj.getA(), 'foo');
+        t.equal(typeof obj.getA, 'function');
+        t.equal(typeof obj.setA, 'function');
+        t.equal(obj.getA(), 'a1');
+        t.equal(obj.setA('foo'), 'foo');
+        t.equal(obj.getA(), 'foo');
     }
 
     var a = new Foo('a1', 'b2', 'c3'),
@@ -74,61 +75,62 @@ exports['test Self#noInheritence'] = function () {
     testFoobarInstance(b);
     testFoobarInstance(c);
     testFoobarInstance(d);
-};
+    t.end();
+});
 
-exports['test Self#classInheritence'] = function () {
+test('test Self#classInheritence', function (t) {
     var Foo = Self.extend({
         initialize: function (self, a) {
-            assert.equal(this, self);
+            t.equal(this, self);
             self.a = a;
-            assert.equal(self.a, 'a1');
+            t.equal(self.a, 'a1');
         }
     });
-    assert.equal(Foo.__super__, Self.prototype);
-    assert.equal(typeof Foo.extend, 'function');
-    assert.equal(typeof Foo.mixin, 'function');
+    t.equal(Foo.__super__, Self.prototype);
+    t.equal(typeof Foo.extend, 'function');
+    t.equal(typeof Foo.mixin, 'function');
 
     var Bar = Foo.extend({
         initialize: function (self, a, b) {
-            assert.equal(this, self);
+            t.equal(this, self);
             self.b = b;
             Bar.__super__.initialize(a);
-            assert.equal(self.a, 'a1');
-            assert.equal(self.b, 'b2');
+            t.equal(self.a, 'a1');
+            t.equal(self.b, 'b2');
         }
     });
-    assert.equal(Bar.__super__, Foo.prototype);
-    assert.equal(typeof Bar.extend, 'function');
-    assert.equal(typeof Bar.mixin, 'function');
+    t.equal(Bar.__super__, Foo.prototype);
+    t.equal(typeof Bar.extend, 'function');
+    t.equal(typeof Bar.mixin, 'function');
 
     var Hello = Bar.extend({
         initialize: function (self, a, b, c) {
-            assert.equal(this, self);
+            t.equal(this, self);
             self.c = c;
             Hello.__super__.initialize(a, b);
-            assert.equal(self.a, 'a1');
-            assert.equal(self.b, 'b2');
-            assert.equal(self.c, 'c3');
+            t.equal(self.a, 'a1');
+            t.equal(self.b, 'b2');
+            t.equal(self.c, 'c3');
         }
     });
-    assert.equal(Hello.__super__, Bar.prototype);
-    assert.equal(typeof Hello.extend, 'function');
-    assert.equal(typeof Hello.mixin, 'function');
+    t.equal(Hello.__super__, Bar.prototype);
+    t.equal(typeof Hello.extend, 'function');
+    t.equal(typeof Hello.mixin, 'function');
 
     var World = Hello.extend({
         initialize: function (self, a, b, c, d) {
-            assert.equal(this, self);
+            t.equal(this, self);
             self.d = d;
             World.__super__.initialize(a, b, c);
-            assert.equal(self.a, 'a1');
-            assert.equal(self.b, 'b2');
-            assert.equal(self.c, 'c3');
-            assert.equal(self.d, 'd4');
+            t.equal(self.a, 'a1');
+            t.equal(self.b, 'b2');
+            t.equal(self.c, 'c3');
+            t.equal(self.d, 'd4');
         }
     });
-    assert.equal(World.__super__, Hello.prototype);
-    assert.equal(typeof World.extend, 'function');
-    assert.equal(typeof World.mixin, 'function');
+    t.equal(World.__super__, Hello.prototype);
+    t.equal(typeof World.extend, 'function');
+    t.equal(typeof World.mixin, 'function');
 
     var foo_n = new Foo('a1'),
         foo = Foo('a1'),
@@ -138,14 +140,15 @@ exports['test Self#classInheritence'] = function () {
         hello = Hello('a1', 'b2', 'c3'),
         world_n = new World('a1', 'b2', 'c3', 'd4'),
         world = World('a1', 'b2', 'c3', 'd4');
-};
+    t.end();
+});
 
-exports['test Self#prototypalInheritence'] = function () {
+test('test Self#prototypalInheritence', function (t) {
     function Proto(a, b) {
         this.a = a;
         this.b = b;
-        assert.equal(a, 'a1');
-        assert.equal(b, 'b2');
+        t.equal(a, 'a1');
+        t.equal(b, 'b2');
     }
 
     Proto.prototype.setValue = function (value) {
@@ -158,45 +161,46 @@ exports['test Self#prototypalInheritence'] = function () {
     };
 
     var ProtoClass = Self.create(Proto);
-    assert.equal(ProtoClass.__super__, Object.prototype);
-    assert.equal(typeof ProtoClass.extend, 'function');
-    assert.equal(typeof ProtoClass.mixin, 'function');
+    t.equal(ProtoClass.__super__, Object.prototype);
+    t.equal(typeof ProtoClass.extend, 'function');
+    t.equal(typeof ProtoClass.mixin, 'function');
 
     var proto_n = new ProtoClass('a1', 'b2'),
         proto = ProtoClass('a1', 'b2');
 
-    assert.equal(proto_n.a, 'a1');
-    assert.equal(proto_n.b, 'b2');
-    assert.equal(proto_n.setValue('foobar'), 'foobar');
-    assert.equal(proto_n.getValue(), 'foobar');
-    assert.equal(proto.a, 'a1');
-    assert.equal(proto.b, 'b2');
-    assert.equal(proto.setValue('foobar'), 'foobar');
-    assert.equal(proto.getValue(), 'foobar');
+    t.equal(proto_n.a, 'a1');
+    t.equal(proto_n.b, 'b2');
+    t.equal(proto_n.setValue('foobar'), 'foobar');
+    t.equal(proto_n.getValue(), 'foobar');
+    t.equal(proto.a, 'a1');
+    t.equal(proto.b, 'b2');
+    t.equal(proto.setValue('foobar'), 'foobar');
+    t.equal(proto.getValue(), 'foobar');
 
     var Foo = ProtoClass.extend({
         initialize: function (self, a, b, c) {
-            assert.equal(this, self);
+            t.equal(this, self);
             self.c = c;
             Foo.__super__.initialize(a, b);
-            assert.equal(a, 'a1');
-            assert.equal(b, 'b2');
-            assert.equal(c, 'c3');
+            t.equal(a, 'a1');
+            t.equal(b, 'b2');
+            t.equal(c, 'c3');
         }
     });
 
     var foo_n = new Foo('a1', 'b2', 'c3'),
         foo = Foo('a1', 'b2', 'c3');
 
-    assert.equal(foo_n.a, 'a1');
-    assert.equal(foo.a, 'a1');
-    assert.equal(foo_n.setValue('foobar'), 'foobar');
-    assert.equal(foo_n.getValue(), 'foobar');
-    assert.equal(foo.setValue('foobar'), 'foobar');
-    assert.equal(foo.getValue(), 'foobar');
-};
+    t.equal(foo_n.a, 'a1');
+    t.equal(foo.a, 'a1');
+    t.equal(foo_n.setValue('foobar'), 'foobar');
+    t.equal(foo_n.getValue(), 'foobar');
+    t.equal(foo.setValue('foobar'), 'foobar');
+    t.equal(foo.getValue(), 'foobar');
+    t.end();
+});
 
-exports['test Self#mixins'] = function () {
+test('test Self#mixins', function (t) {
     var Foo = Self({
         a: 'a1',
         b: 'b2',
@@ -215,14 +219,15 @@ exports['test Self#mixins'] = function () {
 
     var foo = Foo();
 
-    assert.equal(foo.a, 'a1');
-    assert.equal(foo.b, 'b2');
-    assert.equal(foo.c, 'c3');
-    assert.equal(foo.d, 'd4');
-    assert.equal(foo.e, 'e5');
-};
+    t.equal(foo.a, 'a1');
+    t.equal(foo.b, 'b2');
+    t.equal(foo.c, 'c3');
+    t.equal(foo.d, 'd4');
+    t.equal(foo.e, 'e5');
+    t.end();
+});
 
-exports['test Self#backbone'] = function () {
+test('test Self#backbone', function (t) {
     var MyModel = Backbone.Model.extend({
         initialize: function (attr, opts) {
             this.c = opts.c;
@@ -231,10 +236,10 @@ exports['test Self#backbone'] = function () {
     });
 
     var model = new MyModel({a: 'a1', b: 'b2'}, {c: 'c3', d: 'd4'});
-    assert.equal(model.attributes.a, 'a1');
-    assert.equal(model.attributes.b, 'b2');
-    assert.equal(model.c, 'c3');
-    assert.equal(model.d, 'd4');
+    t.equal(model.attributes.a, 'a1');
+    t.equal(model.attributes.b, 'b2');
+    t.equal(model.c, 'c3');
+    t.equal(model.d, 'd4');
 
     var MySelfModel = Self(MyModel, {
         initialize: function (self, attr, opts) {
@@ -246,12 +251,12 @@ exports['test Self#backbone'] = function () {
 
     var self_model = new MySelfModel({a: 'a1', b: 'b2'},
         {c: 'c3', d: 'd4', e: 'e5', f: 'f6'});
-    assert.equal(self_model.attributes.a, 'a1');
-    assert.equal(self_model.attributes.b, 'b2');
-    assert.equal(self_model.c, 'c3');
-    assert.equal(self_model.d, 'd4');
-    assert.equal(self_model.e, 'e5');
-    assert.equal(self_model.f, 'f6');
+    t.equal(self_model.attributes.a, 'a1');
+    t.equal(self_model.attributes.b, 'b2');
+    t.equal(self_model.c, 'c3');
+    t.equal(self_model.d, 'd4');
+    t.equal(self_model.e, 'e5');
+    t.equal(self_model.f, 'f6');
 
     var BlankModel = Self(Backbone.Model, {
         initialize: function (self, attr, opts) {
@@ -262,8 +267,9 @@ exports['test Self#backbone'] = function () {
     });
 
     var blank_model = BlankModel({a: 'a1', b: 'b2'}, {c: 'c3', d: 'd4'});
-    assert.equal(blank_model.attributes.a, 'a1');
-    assert.equal(blank_model.attributes.b, 'b2');
-    assert.equal(blank_model.c, 'c3');
-    assert.equal(blank_model.d, 'd4');
-};
+    t.equal(blank_model.attributes.a, 'a1');
+    t.equal(blank_model.attributes.b, 'b2');
+    t.equal(blank_model.c, 'c3');
+    t.equal(blank_model.d, 'd4');
+    t.end();
+});

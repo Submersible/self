@@ -2,7 +2,7 @@
   "author": "Ryan Munro <munro.github@gmail.com> (http://0x0539.org)",
   "name": "self",
   "description": "Python-like class sugar.  No more \"var that = this\"!",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "homepage": "https://github.com/munro/self",
   "repository": {
     "type": "git",
@@ -10,14 +10,14 @@
   },
   "main": "./lib/self.js",
   "scripts": {
-    "test": "./node_modules/.bin/expresso ./tests.js"
+    "test": "./node_modules/.bin/tap tests.js"
   },
   "dependencies": {
   },
   "devDependencies": {
     "backbone": "0.9.2",
-    "expresso": "0.9.2",
-    "microtime": "0.3.1",
+    "microtime": "0.2.0",
+    "tap": "0.2.4",
     "uglify-js": "1.2.6"
   },
   "license": "MIT"

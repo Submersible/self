@@ -24,9 +24,9 @@ inherit.  Self plays nicely with existing prototypal, and Backbone OOP.
 
 ## Downloads
 
-[Development Version (0.2.0)](https://raw.github.com/munro/self/master/self.js) — 6.1 KiB, uncompressed with comments.
+[Development Version (0.2.1)](https://raw.github.com/munro/self/master/self.js) — 6.1 KiB, uncompressed with comments.
 
-[Production Version (0.2.0)](https://raw.github.com/munro/self/master/self.min.js) — 695 bytes, minified and gzipped.
+[Production Version (0.2.1)](https://raw.github.com/munro/self/master/self.min.js) — 695 bytes, minified and gzipped.
 
 ## Documentation
 
