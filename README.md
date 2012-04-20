@@ -155,8 +155,8 @@ prototypal method.  Keep in mind this overhead may be negligible compared to the
 time it takes to run the code in your method.  Below are the actual timings of
 calling those methods on my machine.
 
-* With Self — 6 nanoseconds/call
-* Without Self —  610 nanoseconds/call
+* Without Self — 6 nanoseconds/call
+* With Self —  610 nanoseconds/call
 
 To run these benchmarks yourself, clone this project and run:
 `npm install -d && node ./benchmarks.js`
