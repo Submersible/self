@@ -3,21 +3,22 @@
   "name": "self",
   "description": "Python-like class sugar.  No more \"var that = this\"!",
   "version": "0.1.2",
-  "homepage": "http://github.com/munro/self",
+  "homepage": "https://github.com/munro/self",
   "repository": {
     "type": "git",
-    "url": "git://github.com/munro/self.git"
+    "url": "https://github.com/munro/self.git"
   },
   "main": "./lib/self.js",
   "scripts": {
-    "test": "./node_modules/.bin/expresso ./test/*"
+    "test": "./node_modules/.bin/expresso ./tests.js"
   },
   "dependencies": {
   },
   "devDependencies": {
-    "backbone": "0.5.3",
+    "backbone": "0.9.2",
     "expresso": "0.9.2",
-    "microtime": "0.2.0",
-    "uglify-js": "1.2.3"
-  }
+    "microtime": "0.3.1",
+    "uglify-js": "1.2.6"
+  },
+  "license": "MIT"
 }

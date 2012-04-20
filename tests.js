@@ -1,10 +1,14 @@
+/*jslint node: true, newcap: true, nomen: true, vars: true */
+
+'use strict';
+
 var assert = require('assert'),
-    Self = require('../lib/self'),
+    Self = require('./self'),
     Backbone = require('backbone');
 
 exports['test Self#intialization'] = function () {
     assert.equal(typeof Self, 'function');
-    assert.equal(Self.VERSION, '0.1.2');
+    assert.equal(Self.VERSION, '0.2.0');
 
     assert.equal(typeof Self.extend, 'function');
     assert.equal(typeof Self.mixin, 'function');
@@ -38,7 +42,7 @@ exports['test Self#noInheritence'] = function () {
             return self.a;
         }
     };
-    
+
     var Foo = Self.extend(def),
         Bar = Self(def);
 
@@ -153,13 +157,12 @@ exports['test Self#prototypalInheritence'] = function () {
         return this.value;
     };
 
-
     var ProtoClass = Self.create(Proto);
     assert.equal(ProtoClass.__super__, Object.prototype);
     assert.equal(typeof ProtoClass.extend, 'function');
     assert.equal(typeof ProtoClass.mixin, 'function');
 
-    var proto_n = new ProtoClass('a1', 'b2');
+    var proto_n = new ProtoClass('a1', 'b2'),
         proto = ProtoClass('a1', 'b2');
 
     assert.equal(proto_n.a, 'a1');
@@ -171,7 +174,6 @@ exports['test Self#prototypalInheritence'] = function () {
     assert.equal(proto.setValue('foobar'), 'foobar');
     assert.equal(proto.getValue(), 'foobar');
 
-
     var Foo = ProtoClass.extend({
         initialize: function (self, a, b, c) {
             assert.equal(this, self);
@@ -182,7 +184,6 @@ exports['test Self#prototypalInheritence'] = function () {
             assert.equal(c, 'c3');
         }
     });
-
 
     var foo_n = new Foo('a1', 'b2', 'c3'),
         foo = Foo('a1', 'b2', 'c3');
@@ -203,11 +204,13 @@ exports['test Self#mixins'] = function () {
     });
 
     Foo.mixin({
-        a: 'hello',
-        b: 'world',
-        c: 'c3',
-        d: 'foobar',
-        e: 'e5'
+        prototype: {
+            a: 'hello',
+            b: 'world',
+            c: 'c3',
+            d: 'foobar',
+            e: 'e5'
+        }
     });
 
     var foo = Foo();
@@ -250,7 +253,6 @@ exports['test Self#backbone'] = function () {
     assert.equal(self_model.e, 'e5');
     assert.equal(self_model.f, 'f6');
 
-
     var BlankModel = Self(Backbone.Model, {
         initialize: function (self, attr, opts) {
             MySelfModel.__super__.initialize.call(self, attr, opts);
@@ -258,7 +260,7 @@ exports['test Self#backbone'] = function () {
             self.d = opts.d;
         }
     });
-    
+
     var blank_model = BlankModel({a: 'a1', b: 'b2'}, {c: 'c3', d: 'd4'});
     assert.equal(blank_model.attributes.a, 'a1');
     assert.equal(blank_model.attributes.b, 'b2');

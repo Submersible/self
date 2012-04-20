@@ -1,5 +1,7 @@
-/* Self v0.1.2 https://github.com/munro/self
+/* Self v0.2.0 https://github.com/munro/self
  * https://github.com/munro/self/blob/master/LICENSE */
+
+/*jslint browser: true, nomen: true, forin: true */
 
 var Self = (function () {
     'use strict';
@@ -11,7 +13,7 @@ var Self = (function () {
         return Self.extend.apply(Self, arguments);
     }
 
-    Self.VERSION = '0.1.2';
+    Self.VERSION = '0.2.0';
 
     // Create a new object based on the old one
     // http://javascript.crockford.com/prototypal.html
@@ -25,6 +27,16 @@ var Self = (function () {
         };
     }
 
+    // Wrap an existing method so that it unshifts self onto the arguments
+    function wrapMethodWithSelf(fn) {
+        return function () {
+            // Push `this` in front of arguments before calling
+            var args = Array.prototype.slice.call(arguments, 0);
+            args.unshift(this);
+            return fn.apply(this, args);
+        };
+    }
+
     // Return a function to extend a class
     function makeExtendMethod(Class) {
         return function (def) {
@@ -35,13 +47,13 @@ var Self = (function () {
     // Copies another object's prototype into the Class, skipping any properties
     // that already exists, or are from `Object.prototype`.
     function makeMixinMethod(Class) {
-        return function (properties) {
+        return function (obj) {
             var key;
 
-            for (key in properties) {
+            for (key in obj.prototype) {
                 if (typeof Class.prototype[key] === 'undefined' &&
                         !Object.hasOwnProperty(key)) {
-                    Class.prototype[key] = properties[key];
+                    Class.prototype[key] = obj.prototype[key];
                 }
             }
         };
@@ -75,7 +87,7 @@ var Self = (function () {
             return obj;
         }
 
-        // Use differential inheritence
+        // Use differential inheritance
         Class.prototype = objectCreate(Parent.prototype);
 
         // Helper property & methods
@@ -83,18 +95,12 @@ var Self = (function () {
         Class.extend = makeExtendMethod(Class);
         Class.mixin = makeMixinMethod(Class);
 
+
         // Copy class definition into prototype
         for (key in def) {
             if (!Object.hasOwnProperty(key)) {
                 if (typeof def[key] === 'function') {
-                    (function (fn) {
-                        Class.prototype[key] = function () {
-                            // Push `this` infront of arguments before calling
-                            var args = Array.prototype.slice.call(arguments, 0);
-                            args.splice(0, 0, this);
-                            return fn.apply(this, args);
-                        };
-                    }(def[key]));
+                    Class.prototype[key] = wrapMethodWithSelf(def[key]);
                 } else {
                     Class.prototype[key] = def[key];
                 }
@@ -110,13 +116,12 @@ var Self = (function () {
     // For the sake of convenience, allow the Self.extend to instead directly 
     // inherit from a prototype, instead of the Self class itself.
     Self.extend = function (arg1, arg2) {
-        // arg1 is the class definition
+        // `arg1` is the class definition
         if (typeof arg2 === 'undefined') {
             return makeClass(Self, arg1);
-        // Extend prototype, arg1 is the prototype, arg2 is the class definition
-        } else {
-            return makeClass(Self.create(arg1), arg2);
         }
+        // Extend prototype, `arg1` is the prototype, `arg2` is the class definition
+        return makeClass(Self.create(arg1), arg2);
     };
 
     // I don't recommend mixing into the base class!  But for the sake of
@@ -130,14 +135,13 @@ var Self = (function () {
         function Class() {
             var obj;
 
-            // Create new object if the `new` keyword was not used.  Check
-            // against `global` for Node.js, and `window` for browser side
-            // JavaScript.
-            if (this === (typeof window === 'undefined' ? global : window) ||
-                    typeof this === 'undefined') {
-                obj = objectCreate(Class.prototype);
-            } else {
+            // Create a new object if the `new` keyword was not used.  We can
+            // detected this by checking to see if the context of this function
+            // is an instance of itself (the constructor).
+            if (this instanceof Class) {
                 obj = this;
+            } else {
+                obj = objectCreate(Class.prototype);
             }
 
             // Call the prototypal constructor
@@ -156,7 +160,7 @@ var Self = (function () {
             var ret;
             // Backbone's constructors call `this.initialize`.  Therefore wrap
             // the `initialize` function to prevent Backbone's constructor from
-            // getting stuck in an inifite loop.
+            // getting stuck in an infinite loop.
             if (!initialize._proto_hack) {
                 // Store current initialize function, and flag that we're in
                 // hack mode
@@ -182,7 +186,7 @@ var Self = (function () {
     return Self;
 }());
 
-// Export as a module for Node.JS
+// Export as a module for Node.js
 if (typeof global !== 'undefined' && typeof module !== 'undefined') {
     module.exports = Self;
 }

@@ -1,7 +1,12 @@
-$(document).ready(function(){
+/*jslint browser: true, newcap: true, nomen: true, vars: true */
+/*global $: false, test: false, equal: false, Self: false */
+
+$(document).ready(function () {
+    'use strict';
+
     test('Self intialization', function () {
         equal(typeof Self, 'function');
-        equal(Self.VERSION, '0.1.2');
+        equal(Self.VERSION, '0.2.0');
 
         equal(typeof Self.extend, 'function');
         equal(typeof Self.mixin, 'function');
@@ -150,13 +155,12 @@ $(document).ready(function(){
             return this.value;
         };
 
-
         var ProtoClass = Self.create(Proto);
         equal(ProtoClass.__super__, Object.prototype);
         equal(typeof ProtoClass.extend, 'function');
         equal(typeof ProtoClass.mixin, 'function');
 
-        var proto_n = new ProtoClass('a1', 'b2');
+        var proto_n = new ProtoClass('a1', 'b2'),
             proto = ProtoClass('a1', 'b2');
 
         equal(proto_n.a, 'a1');
@@ -168,7 +172,6 @@ $(document).ready(function(){
         equal(proto.setValue('foobar'), 'foobar');
         equal(proto.getValue(), 'foobar');
 
-
         var Foo = ProtoClass.extend({
             initialize: function (self, a, b, c) {
                 equal(this, self);
@@ -179,7 +182,6 @@ $(document).ready(function(){
                 equal(c, 'c3');
             }
         });
-
 
         var foo_n = new Foo('a1', 'b2', 'c3'),
             foo = Foo('a1', 'b2', 'c3');
@@ -200,11 +202,13 @@ $(document).ready(function(){
         });
 
         Foo.mixin({
-            a: 'hello',
-            b: 'world',
-            c: 'c3',
-            d: 'foobar',
-            e: 'e5'
+            prototype: {
+                a: 'hello',
+                b: 'world',
+                c: 'c3',
+                d: 'foobar',
+                e: 'e5'
+            }
         });
 
         var foo = Foo();

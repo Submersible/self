@@ -1,4 +1,4 @@
-var Self = require('./lib/self'),
+var Self = require('./self'),
     microtime = require('microtime');
 
 var COUNT = 0xfffff;
