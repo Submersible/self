@@ -3,7 +3,7 @@
 ## Why another OOP abstraction?
 
 Self is class-based sugar inspired from Python syntax that's perfect for
-continuation-passing style.  No more `var this = that;`!  The implicit `this`
+continuation-passing style.  No more `var that = this;`!  The implicit `this`
 variable is changed to an explicit `self` variable that your inner functions
 inherit.  Self plays nicely with existing prototypal, and Backbone OOP.
 
