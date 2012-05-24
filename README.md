@@ -24,9 +24,9 @@ inherit.  Self plays nicely with existing prototypal, and Backbone OOP.
 
 ## Downloads
 
-[Development Version (0.2.1)](https://raw.github.com/munro/self/master/self.js) — 6.1 KiB, uncompressed with comments.
+[Development Version (0.2.2)](https://raw.github.com/munro/self/master/self.js) — 6.3 KiB, uncompressed with comments.
 
-[Production Version (0.2.1)](https://raw.github.com/munro/self/master/self.min.js) — 695 bytes, minified and gzipped.
+[Production Version (0.2.2)](https://raw.github.com/munro/self/master/self.min.js) — 704 bytes, minified and gzipped.
 
 ## Documentation
 
@@ -118,6 +118,36 @@ not already in the existing class will be copied in.
     });
 
     Bar.mixin(Foo);
+
+### API
+
+* `Self` module
+    * `Self({Object} definition)` — Shorthand for
+        `.extend({Object} definition)`.
+    * `Self({Object} prototype, {Object} definition)` — Shorthand for
+        `.extend(Self.create({Object} prototype), {Object} definition)`.
+    * `.VERSION` — Property indicating the version of Self.
+    * `.__super__` — Super prototype of `Self`, which is `Object.prototype`.
+    * `.extend({Object} definition) -> {Class}` — Extends the class with a new
+        class definition, returning the created class.
+    * `.mixin({Class})` — Copies another class's definitions into the Self base
+        class.
+    * `.create({Constructor}) -> {Class}` — Wraps a prototypal constructor as a
+        Self class, returning the created class.
+
+* `{Class}` functor
+    * Calling returns `{Class Instance}`, passing any arguments to the
+        `initialize` method definition.
+    * `.__super__`
+    * `.extend({Object} definition) -> {Class}` — Same as above, extends the
+        class, returning the created class.
+    * `.mixin({Class}) -> {Class}` — Same as above, copies class definitions
+        from mixin class into the current class.  Returns the same class for
+        chaining.
+
+* `{Class Instance}` instantiated class object
+    * Self does not add any extra methods aside from what was passed into the
+      class definition.
 
 ## Integrating With Other Forms of OOP
 

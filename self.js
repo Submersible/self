@@ -1,4 +1,4 @@
-/* Self v0.2.1 https://github.com/munro/self
+/* Self v0.2.2 https://github.com/munro/self
  * https://github.com/munro/self/blob/master/LICENSE */
 
 /*jslint browser: true, nomen: true, forin: true */
@@ -13,7 +13,7 @@ var Self = (function () {
         return Self.extend.apply(Self, arguments);
     }
 
-    Self.VERSION = '0.2.1';
+    Self.VERSION = '0.2.2';
 
     // Create a new object based on the old one
     // http://javascript.crockford.com/prototypal.html
@@ -56,6 +56,8 @@ var Self = (function () {
                     Class.prototype[key] = obj.prototype[key];
                 }
             }
+
+            return Class;
         };
     }
 
@@ -68,15 +70,22 @@ var Self = (function () {
         function Class() {
             var obj;
 
+            // Call the Mixin constructor
+            if (this && this.__inst__) {
+                Class.prototype.initialize.apply(this, arguments);
+                return this;
+            }
+
             // Create new object if the `new` keyword was not used.  Check
             // against `global` for Node.js, and `window` for browser side
             // JavaScript.
-            if (this === (typeof window === 'undefined' ? global : window) ||
-                    typeof this === 'undefined') {
-                obj = objectCreate(Class.prototype);
-            } else {
+            if (this instanceof Class) {
                 obj = this;
+            } else {
+                obj = objectCreate(Class.prototype);
             }
+
+            obj.__inst__ = true;
 
             // Call the constructor
             if (typeof obj.initialize === 'function') {
@@ -138,7 +147,7 @@ var Self = (function () {
             // Create a new object if the `new` keyword was not used.  We can
             // detected this by checking to see if the context of this function
             // is an instance of itself (the constructor).
-            if (this instanceof Class) {
+            if (this instanceof Class || (this && this.__inst__)) {
                 obj = this;
             } else {
                 obj = objectCreate(Class.prototype);

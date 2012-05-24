@@ -8,7 +8,7 @@ var Backbone = require('backbone'),
 
 test('test Self#intialization', function (t) {
     t.equal(typeof Self, 'function');
-    t.equal(Self.VERSION, '0.2.1');
+    t.equal(Self.VERSION, '0.2.2');
 
     t.equal(typeof Self.extend, 'function');
     t.equal(typeof Self.mixin, 'function');
@@ -207,7 +207,7 @@ test('test Self#mixins', function (t) {
         d: 'd4'
     });
 
-    Foo.mixin({
+    t.equal(Foo.mixin({
         prototype: {
             a: 'hello',
             b: 'world',
@@ -215,7 +215,7 @@ test('test Self#mixins', function (t) {
             d: 'foobar',
             e: 'e5'
         }
-    });
+    }), Foo, 'Calling mixin returns the original class');
 
     var foo = Foo();
 
@@ -224,6 +224,44 @@ test('test Self#mixins', function (t) {
     t.equal(foo.c, 'c3');
     t.equal(foo.d, 'd4');
     t.equal(foo.e, 'e5');
+    t.end();
+});
+
+test('test Self#namespacing', function (t) {
+    var ns = {
+        Main: Self({
+            initialize: function (self) {
+                self.is_main = true;
+                t.ok(self.__inst__, 'Is an instance');
+                ns.Mixin.call(self, self);
+            },
+            mainMethod: function () {
+            }
+        }),
+        Mixin: Self({
+            initialize: function (self, wanted_self) {
+                self.is_mixin = true;
+                t.equal(self, wanted_self, 'Got the self we wanted');
+            },
+            mixinMethod: function () {
+            }
+        })
+    };
+    t.equal(ns.Main.mixin(ns.Mixin), ns.Main, 'Calling mixin returns the original class');
+
+    var obj = ns.Main();
+    t.ok(obj.is_main, 'Called the Main constructor');
+    t.ok(obj.__inst__, 'Is an instance');
+    t.ok(obj.is_mixin, 'Called the Mixin constructor');
+    t.type(obj.mainMethod, 'function');
+    t.type(obj.mixinMethod, 'function');
+
+    var new_obj = new ns.Main();
+    t.ok(new_obj.is_main, 'Called the Main constructor');
+    t.ok(new_obj.is_mixin, 'Called the Mixin constructor');
+    t.type(new_obj.mainMethod, 'function');
+    t.type(new_obj.mixinMethod, 'function');
+
     t.end();
 });
 
