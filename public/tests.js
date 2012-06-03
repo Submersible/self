@@ -1,5 +1,5 @@
 /*jslint browser: true, newcap: true, nomen: true, vars: true */
-/*global $: false, test: false, equal: false, Self: false */
+/*global $: false, test: false, equal: false, Self: false, Backbone: false */
 
 $(document).ready(function () {
     'use strict';
@@ -13,7 +13,6 @@ $(document).ready(function () {
         t.equal(typeof Self.create, 'function');
 
         t.equal(Self.__super__, Object.prototype);
-        t.end();
     });
 
     test('test Self#noInheritence', function (t) {
@@ -73,7 +72,6 @@ $(document).ready(function () {
         testFoobarInstance(b);
         testFoobarInstance(c);
         testFoobarInstance(d);
-        t.end();
     });
 
     test('test Self#classInheritence', function (t) {
@@ -138,7 +136,6 @@ $(document).ready(function () {
             hello = Hello('a1', 'b2', 'c3'),
             world_n = new World('a1', 'b2', 'c3', 'd4'),
             world = World('a1', 'b2', 'c3', 'd4');
-        t.end();
     });
 
     test('test Self#prototypalInheritence', function (t) {
@@ -195,7 +192,6 @@ $(document).ready(function () {
         t.equal(foo_n.getValue(), 'foobar');
         t.equal(foo.setValue('foobar'), 'foobar');
         t.equal(foo.getValue(), 'foobar');
-        t.end();
     });
 
     test('test Self#mixins', function (t) {
@@ -222,7 +218,6 @@ $(document).ready(function () {
         t.equal(foo.c, 'c3');
         t.equal(foo.d, 'd4');
         t.equal(foo.e, 'e5');
-        t.end();
     });
 
     test('test Self#namespacing', function (t) {
@@ -251,16 +246,14 @@ $(document).ready(function () {
         t.ok(obj.is_main, 'Called the Main constructor');
         t.ok(obj.__inst__, 'Is an instance');
         t.ok(obj.is_mixin, 'Called the Mixin constructor');
-        t.type(obj.mainMethod, 'function');
-        t.type(obj.mixinMethod, 'function');
+        t.ok(typeof obj.mainMethod, 'function');
+        t.ok(typeof obj.mixinMethod, 'function');
 
         var new_obj = new ns.Main();
         t.ok(new_obj.is_main, 'Called the Main constructor');
         t.ok(new_obj.is_mixin, 'Called the Mixin constructor');
-        t.type(new_obj.mainMethod, 'function');
-        t.type(new_obj.mixinMethod, 'function');
-
-        t.end();
+        t.ok(typeof new_obj.mainMethod, 'function');
+        t.ok(typeof new_obj.mixinMethod, 'function');
     });
 
     test('test Self#backbone', function (t) {
@@ -307,6 +300,5 @@ $(document).ready(function () {
         t.equal(blank_model.attributes.b, 'b2');
         t.equal(blank_model.c, 'c3');
         t.equal(blank_model.d, 'd4');
-        t.end();
     });
 });

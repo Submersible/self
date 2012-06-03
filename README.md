@@ -119,7 +119,7 @@ not already in the existing class will be copied in.
 
     Bar.mixin(Foo);
 
-### API
+## API
 
 * `Self` module
     * `Self({Object} definition)` — Shorthand for
