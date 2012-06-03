@@ -1,4 +1,4 @@
-# Self — Python inspired class sugar!
+# Self — Python inspired class sugar! [![Build Status](https://secure.travis-ci.org/munro/self.png?branch=master)](http://travis-ci.org/munro/self)
 
 ## Why another OOP abstraction?
 
