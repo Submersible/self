@@ -26,9 +26,9 @@ inherit.  Self plays nicely with existing prototypal, and Backbone OOP.
 
 Tested to work against Internet Explorer 6+, Safari 3+, Google Chrome 1+, Firefox 3+, and Opera 10+!
 
-[Development Version (0.2.2)](https://raw.github.com/munro/self/master/self.js) — 6.3 KiB, uncompressed with comments.
+[Development Version (0.2.3)](https://raw.github.com/munro/self/master/self.js) — 6.3 KiB, uncompressed with comments.
 
-[Production Version (0.2.2)](https://raw.github.com/munro/self/master/self.min.js) — 704 bytes, minified and gzipped.
+[Production Version (0.2.3)](https://raw.github.com/munro/self/master/self.min.js) — 705 bytes, minified and gzipped.
 
 ## Documentation
 
