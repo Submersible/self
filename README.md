@@ -24,7 +24,7 @@ inherit.  Self plays nicely with existing prototypal, and Backbone OOP.
 
 ## Downloads
 
-Tested to work against Internet Explorer 5.5+, Safari 3+, Google Chrome 4+, Firefox 3+, and Opera 10+!
+Tested to work against Internet Explorer 6+, Safari 3+, Google Chrome 1+, Firefox 3+, and Opera 10+!
 
 [Development Version (0.2.2)](https://raw.github.com/munro/self/master/self.js) — 6.3 KiB, uncompressed with comments.
 
@@ -52,7 +52,6 @@ points the parent class's prototype.
     });
 
     Beagle.__super__ === Dog.prototype; // true
-
 
 For JSLint compliance, a base class can be created using `Self.extend(...)`.
 
