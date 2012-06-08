@@ -3,7 +3,7 @@
 'use strict';
 
 var Backbone = require('backbone'),
-    Self = require('./self'),
+    Self = require('./'),
     test = require('tap').test;
 
 test('test Self#intialization', function (t) {
