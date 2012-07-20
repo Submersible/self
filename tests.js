@@ -44,8 +44,21 @@ test('test Self#noInheritence', function (t) {
         }
     };
 
-    var Foo = Self.extend(def),
-        Bar = Self(def);
+    var static_def = {
+        prop: 'hey ',
+        hello: function (value) {
+            if (typeof value === 'undefined') {
+                return this.value;
+            }
+            this.value = value;
+        },
+        world: function (str) {
+            return this.prop + str;
+        }
+    };
+
+    var Foo = Self.extend(def).staticProps(static_def),
+        Bar = Self(def).staticProps(static_def);
 
     t.equal(typeof Foo, 'function');
     t.equal(typeof Bar, 'function');
@@ -57,6 +70,20 @@ test('test Self#noInheritence', function (t) {
     t.equal(typeof Bar.create, 'undefined');
     t.equal(Foo.__super__, Self.prototype);
     t.equal(Bar.__super__, Self.prototype);
+
+    function testFoobarClass(cls) {
+        t.equal(cls.prop, 'hey ');
+        t.equal(typeof cls.hello, 'function');
+        t.equal(typeof cls.world, 'function');
+        t.equal(cls.world('munro'), 'hey munro');
+        cls.hello(1337);
+        t.equal(cls.hello(), 1337);
+        cls.hello('wee');
+        t.equal(cls.hello(), 'wee');
+    }
+
+    testFoobarClass(Foo);
+    testFoobarClass(Bar);
 
     function testFoobarInstance(obj) {
         t.equal(typeof obj.getA, 'function');
@@ -151,6 +178,17 @@ test('test Self#prototypalInheritence', function (t) {
         t.equal(b, 'b2');
     }
 
+    Proto.staticMethod = function () {
+        return 'yep!';
+    };
+
+    Proto.foobar = function (value) {
+        if (typeof value === 'undefined') {
+            return this._foobar;
+        }
+        this._foobar = value;
+    };
+
     Proto.prototype.setValue = function (value) {
         this.value = value;
         return this.value;
@@ -186,7 +224,22 @@ test('test Self#prototypalInheritence', function (t) {
             t.equal(b, 'b2');
             t.equal(c, 'c3');
         }
+    }).staticProps({
+        newStatic: function () {
+            return 'miaou';
+        }
     });
+
+    t.equal(ProtoClass.staticMethod(), 'yep!');
+    t.equal(typeof (ProtoClass.foobar()), 'undefined');
+    ProtoClass.foobar('rwar');
+    t.equal(ProtoClass.foobar(), 'rwar');
+
+    t.equal(Foo.staticMethod(), 'yep!');
+    t.equal(typeof (Foo.foobar()), 'undefined');
+    Foo.foobar('rwar');
+    t.equal(Foo.foobar(), 'rwar');
+    t.equal(Foo.newStatic(), 'miaou');
 
     var foo_n = new Foo('a1', 'b2', 'c3'),
         foo = Foo('a1', 'b2', 'c3');
@@ -205,9 +258,16 @@ test('test Self#mixins', function (t) {
         a: 'a1',
         b: 'b2',
         d: 'd4'
+    }).staticProps({
+        baseStatic: function () {
+            return 'base';
+        }
     });
 
     t.equal(Foo.mixin({
+        mixinStatic: function () {
+            return 'mixin';
+        },
         prototype: {
             a: 'hello',
             b: 'world',
@@ -216,6 +276,9 @@ test('test Self#mixins', function (t) {
             e: 'e5'
         }
     }), Foo, 'Calling mixin returns the original class');
+
+    t.equal(Foo.baseStatic(), 'base');
+    t.equal(Foo.mixinStatic(), 'mixin');
 
     var foo = Foo();
 
@@ -232,10 +295,14 @@ test('test Self#namespacing', function (t) {
         Main: Self({
             constructor: function (self) {
                 self.is_main = true;
-                t.ok(self.__inst__, 'Is an instance');
+                t.equal(self.__class__, ns.Main, 'Is an instance');
                 ns.Mixin.call(self, self);
             },
             mainMethod: function () {
+            }
+        }).staticProps({
+            mainStatic: function () {
+                return 'main';
             }
         }),
         Mixin: Self({
@@ -245,13 +312,20 @@ test('test Self#namespacing', function (t) {
             },
             mixinMethod: function () {
             }
+        }).staticProps({
+            mixinStatic: function () {
+                return 'mixin';
+            }
         })
     };
     t.equal(ns.Main.mixin(ns.Mixin), ns.Main, 'Calling mixin returns the original class');
 
+    t.equal(ns.Main.mainStatic(), 'main');
+    t.equal(ns.Main.mixinStatic(), 'mixin');
+
     var obj = ns.Main();
     t.ok(obj.is_main, 'Called the Main constructor');
-    t.ok(obj.__inst__, 'Is an instance');
+    t.equal(obj.__class__, ns.Main, 'Is an instance');
     t.ok(obj.is_mixin, 'Called the Mixin constructor');
     t.type(obj.mainMethod, 'function');
     t.type(obj.mixinMethod, 'function');
@@ -273,6 +347,10 @@ test('test Self#backbone', function (t) {
         }
     });
 
+    MyModel.modelStatic = function () {
+        return 'model';
+    };
+
     var model = new MyModel({a: 'a1', b: 'b2'}, {c: 'c3', d: 'd4'});
     t.equal(model.attributes.a, 'a1');
     t.equal(model.attributes.b, 'b2');
@@ -285,7 +363,14 @@ test('test Self#backbone', function (t) {
             self.e = opts.e;
             self.f = opts.f;
         }
+    }).staticProps({
+        selfModelStatic: function () {
+            return 'self_model';
+        }
     });
+
+    t.equal(MySelfModel.modelStatic(), 'model');
+    t.equal(MySelfModel.selfModelStatic(), 'self_model');
 
     var self_model = new MySelfModel({a: 'a1', b: 'b2'},
         {c: 'c3', d: 'd4', e: 'e5', f: 'f6'});

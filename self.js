@@ -47,13 +47,33 @@ var Self = (function () {
     // Copies another object's prototype into the Class, skipping any properties
     // that already exists, or are from `Object.prototype`.
     function makeMixinMethod(Class) {
-        return function (obj) {
+        return function (Mixin) {
             var key;
 
-            for (key in obj.prototype) {
+            for (key in Mixin) {
+                if (Mixin.hasOwnProperty(key) && key !== 'prototype' && key !== '__super__' && key !== 'extend' && key !== 'mixin' && key !== 'staticProps') {
+                    Class[key] = Mixin[key];
+                }
+            }
+
+            for (key in Mixin.prototype) {
                 if (typeof Class.prototype[key] === 'undefined' &&
                         !Object.hasOwnProperty(key)) {
-                    Class.prototype[key] = obj.prototype[key];
+                    Class.prototype[key] = Mixin.prototype[key];
+                }
+            }
+
+            return Class;
+        };
+    }
+
+    function makeStaticPropsMethod(Class) {
+        return function (def) {
+            var key;
+
+            for (key in def) {
+                if (def.hasOwnProperty(key)) {
+                    Class[key] = def[key];
                 }
             }
 
@@ -71,7 +91,7 @@ var Self = (function () {
             var obj;
 
             // Call the Mixin constructor
-            if (this && this.__inst__) {
+            if (this && this.__class__) {
                 Class.prototype.constructor.apply(this, arguments);
                 return this;
             }
@@ -85,7 +105,8 @@ var Self = (function () {
                 obj = objectCreate(Class.prototype);
             }
 
-            obj.__inst__ = true;
+            obj.__class__ = Class;
+            obj.__super__ = Parent.prototype;
 
             // Call the constructor
             if (typeof obj.constructor === 'function') {
@@ -96,6 +117,13 @@ var Self = (function () {
             return obj;
         }
 
+        // Inherit static properties
+        for (key in Parent) {
+            if (Parent.hasOwnProperty(key) && Parent[key] !== Self[key]) {
+                Class[key] = Parent[key];
+            }
+        }
+
         // Use differential inheritance
         Class.prototype = objectCreate(Parent.prototype);
 
@@ -103,6 +131,7 @@ var Self = (function () {
         Class.__super__ = Parent.prototype;
         Class.extend = makeExtendMethod(Class);
         Class.mixin = makeMixinMethod(Class);
+        Class.staticProps = makeStaticPropsMethod(Class);
 
         // Copy class definition into prototype
         for (key in def) {
@@ -137,7 +166,7 @@ var Self = (function () {
     Self.mixin = makeMixinMethod(Self);
 
     // Create a new class that directly inherits from a prototype.
-    Self.create = function (proto) {
+    Self.create = function (Proto) {
         var key;
 
         function Class() {
@@ -146,23 +175,31 @@ var Self = (function () {
             // Create a new object if the `new` keyword was not used.  We can
             // detected this by checking to see if the context of this function
             // is an instance of itself (the constructor).
-            if (this instanceof Class || (this && this.__inst__)) {
+            if (this instanceof Class || (this && this.__class__)) {
                 obj = this;
             } else {
                 obj = objectCreate(Class.prototype);
             }
 
-            // Call the prototypal constructor
-            proto.apply(obj, arguments);
+            // Call the Prototypal constructor
+            Proto.apply(obj, arguments);
 
             // Return the constructed object if `new` keyword was not used.
             return obj;
         }
 
+        // Inherit static properties
+        for (key in Proto) {
+            if (Proto.hasOwnProperty(key)) {
+                Class[key] = Proto[key];
+            }
+        }
+
         Class.__super__ = Object.prototype;
         Class.extend = makeExtendMethod(Class);
         Class.mixin = makeMixinMethod(Class);
-        Class.prototype = objectCreate(proto.prototype);
+        Class.staticProps = makeStaticPropsMethod(Class);
+        Class.prototype = objectCreate(Proto.prototype);
 
         return Class;
     };
