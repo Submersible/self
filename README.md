@@ -102,16 +102,14 @@ a property on the class, or it can be done by using the sugar `.staticProps`
 method.
 
     var Foo = Self({
-        instMethod: function (self) {
-            return 'ima instance!';
-        }
     }).staticProps({
         classMethod: function () {
             return 'ima class!';
         }
     });
 
-    var Bar = Foo.extend();
+    var Bar = Foo.extend({
+    });
 
     Bar.otherStaticMethod = function () {
         return 'ima static method on Bar!';
