@@ -8,7 +8,7 @@ var Backbone = require('backbone'),
 
 test('test Self#intialization', function (t) {
     t.equal(typeof Self, 'function');
-    t.equal(Self.VERSION, '0.2.4');
+    t.equal(Self.VERSION, '1.0.0');
 
     t.equal(typeof Self.extend, 'function');
     t.equal(typeof Self.mixin, 'function');

@@ -1,4 +1,4 @@
-/* Self v0.2.4 https://github.com/munro/self
+/* Self v1.0.0 https://github.com/munro/self
  * https://github.com/munro/self/blob/master/LICENSE */
 
 /*jslint browser: true, nomen: true, forin: true */
@@ -13,7 +13,7 @@ var Self = (function () {
         return Self.extend.apply(Self, arguments);
     }
 
-    Self.VERSION = '0.2.4';
+    Self.VERSION = '1.0.0';
 
     // Create a new object based on the old one
     // http://javascript.crockford.com/prototypal.html
@@ -70,6 +70,8 @@ var Self = (function () {
     function makeStaticPropsMethod(Class) {
         return function (def) {
             var key;
+
+            def = def || {};
 
             for (key in def) {
                 if (def.hasOwnProperty(key)) {

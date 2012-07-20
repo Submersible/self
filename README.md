@@ -9,8 +9,8 @@ inherit.  Self plays nicely with existing prototypal, and Backbone OOP.
 
     var Timer = Self(EventEmitter, {
         count: 0,
-        initialize: function (self, interval) {
-            Timer.__super__.initialize.call(self);
+        constructor: function (self, interval) {
+            Timer.__super__.constructor.call(self);
 
             setInterval(function () {
                 self.tick();
@@ -26,9 +26,9 @@ inherit.  Self plays nicely with existing prototypal, and Backbone OOP.
 
 Tested to work against Internet Explorer 6+, Safari 3+, Google Chrome 1+, Firefox 3+, and Opera 10+!
 
-[Development Version (0.2.4)](https://raw.github.com/munro/self/master/self.js) — 6.3 KiB, uncompressed with comments.
+[Development Version (1.0.0)](https://raw.github.com/munro/self/master/self.js) — 6.5 KiB, uncompressed with comments.
 
-[Production Version (0.2.4)](https://raw.github.com/munro/self/master/self.min.js) — 698 bytes, minified and gzipped.
+[Production Version (1.0.0)](https://raw.github.com/munro/self/master/self.min.js) — 715 bytes, minified and gzipped.
 
 ## Documentation
 
@@ -60,13 +60,13 @@ For JSLint compliance, a base class can be created using `Self.extend(...)`.
 
 ### Constructors
 
-The constructor for a class is the `initialize` method.  Inside the constructor,
-parent and mixin constructors can be called.  The `new` keyword may be omitted
-when instantiating an object.
+The constructor for a class is the `constructor` method.  Inside the constructor
+function, parent and mixin constructors can be called.  The `new` keyword may be
+omitted when instantiating an object.
 
     var Name = Self({
         name_prefix: 'Sir',
-        initialize: function (self, name) {
+        constructor: function (self, name) {
             self._name = name;
         },
         name: function (self, name) {
@@ -78,8 +78,8 @@ when instantiating an object.
     });
 
     var NameAge = Name.extend({
-        initialize: function (self, name, age) {
-            NameAge.__super__.initialize.call(self, name);
+        constructor: function (self, name, age) {
+            NameAge.__super__.constructor.call(self, name);
             self.age = age;
         },
         age: function (self, age) {
@@ -93,6 +93,30 @@ when instantiating an object.
     var name = new Name(),
         name_age = NameAge();
 
+### Static Properties
+
+Static properties on a class will be inherited by the extending class.  Except
+they're not prototypal, so any static defitions will be copied to the child class
+when `extend` is called.  Defining a static property is as simple as setting
+a property on the class, or it can be done by using the sugar `.staticProps`
+method.
+
+    var Foo = Self({
+        instMethod: function (self) {
+            return 'ima instance!';
+        }
+    }).staticProps({
+        classMethod: function () {
+            return 'ima class!';
+        }
+    });
+
+    var Bar = Foo.extend();
+
+    Bar.otherStaticMethod = function () {
+        return 'ima static method on Bar!';
+    };
+
 ### Mixin
 
 Mixins can be used for multiple inheritance.  To mixin a object of properties
@@ -101,7 +125,7 @@ not already in the existing class will be copied in.
 
     var Foo = Self({
         _foo: 'foo',
-        initialize: function (self) {
+        constructor: function (self) {
             console.log('Foo has been mixed in to: ' + self.name + '!');
         },
         foo: function (self, foo) {
@@ -113,7 +137,7 @@ not already in the existing class will be copied in.
     });
 
     var Bar = Self({
-        initialize: function (self) {
+        constructor: function (self) {
             Foo.call(self);
         }
     });
@@ -138,13 +162,15 @@ not already in the existing class will be copied in.
 
 * `{Class}` functor
     * Calling returns `{Class Instance}`, passing any arguments to the
-        `initialize` method definition.
+        `constructor` method definition.
     * `.__super__`
     * `.extend({Object} definition) -> {Class}` — Same as above, extends the
         class, returning the created class.
     * `.mixin({Class}) -> {Class}` — Same as above, copies class definitions
         from mixin class into the current class.  Returns the same class for
         chaining.
+    * `.staticProps({Object} definition) -> {Class}` — Sugar method for
+        defining static properties on a class.
 
 * `{Class Instance}` instantiated class object
     * Self does not add any extra methods aside from what was passed into the
@@ -162,12 +188,17 @@ Or use the shorthand and pass your base prototype as the first parameter in your
 class definition.
 
     var Foobar = Self(EventEmitter, {
-        initialize: function (self) {
-            Foobar.__super__.initialize.call(self); // Calls EventEmitter's constructor
+        constructor: function (self) {
+            Foobar.__super__.constructor.call(self); // Calls EventEmitter's constructor
         }
     });
 
 ### Backbone
+
+Backbone's `initialize` function is not the constructor.  It's a
+[call super method](http://en.wikipedia.org/wiki/Call_super), which gets called
+by the real constructor.  So as long as you keep the constructor semenatics the
+same, you'll be fine!
 
     var MyModel = Self(Backbone.Model, {
         initialize: function (self, attr, opts) {

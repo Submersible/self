@@ -6,7 +6,7 @@ $(document).ready(function () {
 
     test('test Self#intialization', function (t) {
         t.equal(typeof Self, 'function');
-        t.equal(Self.VERSION, '0.2.4');
+        t.equal(Self.VERSION, '1.0.0');
 
         t.equal(typeof Self.extend, 'function');
         t.equal(typeof Self.mixin, 'function');
@@ -18,7 +18,7 @@ $(document).ready(function () {
     test('test Self#noInheritence', function (t) {
         var def = {
             _property: 123,
-            initialize: function (self, a, b, c) {
+            constructor: function (self, a, b, c) {
                 t.equal(this, self);
                 t.equal(a, 'a1');
                 t.equal(b, 'b2');
@@ -41,8 +41,21 @@ $(document).ready(function () {
             }
         };
 
-        var Foo = Self.extend(def),
-            Bar = Self(def);
+        var static_def = {
+            prop: 'hey ',
+            hello: function (value) {
+                if (typeof value === 'undefined') {
+                    return this.value;
+                }
+                this.value = value;
+            },
+            world: function (str) {
+                return this.prop + str;
+            }
+        };
+
+        var Foo = Self.extend(def).staticProps(static_def),
+            Bar = Self(def).staticProps(static_def);
 
         t.equal(typeof Foo, 'function');
         t.equal(typeof Bar, 'function');
@@ -54,6 +67,20 @@ $(document).ready(function () {
         t.equal(typeof Bar.create, 'undefined');
         t.equal(Foo.__super__, Self.prototype);
         t.equal(Bar.__super__, Self.prototype);
+
+        function testFoobarClass(cls) {
+            t.equal(cls.prop, 'hey ');
+            t.equal(typeof cls.hello, 'function');
+            t.equal(typeof cls.world, 'function');
+            t.equal(cls.world('munro'), 'hey munro');
+            cls.hello(1337);
+            t.equal(cls.hello(), 1337);
+            cls.hello('wee');
+            t.equal(cls.hello(), 'wee');
+        }
+
+        testFoobarClass(Foo);
+        testFoobarClass(Bar);
 
         function testFoobarInstance(obj) {
             t.equal(typeof obj.getA, 'function');
@@ -76,7 +103,7 @@ $(document).ready(function () {
 
     test('test Self#classInheritence', function (t) {
         var Foo = Self.extend({
-            initialize: function (self, a) {
+            constructor: function (self, a) {
                 t.equal(this, self);
                 self.a = a;
                 t.equal(self.a, 'a1');
@@ -87,10 +114,10 @@ $(document).ready(function () {
         t.equal(typeof Foo.mixin, 'function');
 
         var Bar = Foo.extend({
-            initialize: function (self, a, b) {
+            constructor: function (self, a, b) {
                 t.equal(this, self);
                 self.b = b;
-                Bar.__super__.initialize(a);
+                Bar.__super__.constructor(a);
                 t.equal(self.a, 'a1');
                 t.equal(self.b, 'b2');
             }
@@ -100,10 +127,10 @@ $(document).ready(function () {
         t.equal(typeof Bar.mixin, 'function');
 
         var Hello = Bar.extend({
-            initialize: function (self, a, b, c) {
+            constructor: function (self, a, b, c) {
                 t.equal(this, self);
                 self.c = c;
-                Hello.__super__.initialize(a, b);
+                Hello.__super__.constructor(a, b);
                 t.equal(self.a, 'a1');
                 t.equal(self.b, 'b2');
                 t.equal(self.c, 'c3');
@@ -114,10 +141,10 @@ $(document).ready(function () {
         t.equal(typeof Hello.mixin, 'function');
 
         var World = Hello.extend({
-            initialize: function (self, a, b, c, d) {
+            constructor: function (self, a, b, c, d) {
                 t.equal(this, self);
                 self.d = d;
-                World.__super__.initialize(a, b, c);
+                World.__super__.constructor(a, b, c);
                 t.equal(self.a, 'a1');
                 t.equal(self.b, 'b2');
                 t.equal(self.c, 'c3');
@@ -146,6 +173,17 @@ $(document).ready(function () {
             t.equal(b, 'b2');
         }
 
+        Proto.staticMethod = function () {
+            return 'yep!';
+        };
+
+        Proto.foobar = function (value) {
+            if (typeof value === 'undefined') {
+                return this._foobar;
+            }
+            this._foobar = value;
+        };
+
         Proto.prototype.setValue = function (value) {
             this.value = value;
             return this.value;
@@ -173,15 +211,30 @@ $(document).ready(function () {
         t.equal(proto.getValue(), 'foobar');
 
         var Foo = ProtoClass.extend({
-            initialize: function (self, a, b, c) {
+            constructor: function (self, a, b, c) {
                 t.equal(this, self);
                 self.c = c;
-                Foo.__super__.initialize(a, b);
+                Foo.__super__.constructor(a, b);
                 t.equal(a, 'a1');
                 t.equal(b, 'b2');
                 t.equal(c, 'c3');
             }
+        }).staticProps({
+            newStatic: function () {
+                return 'miaou';
+            }
         });
+
+        t.equal(ProtoClass.staticMethod(), 'yep!');
+        t.equal(typeof (ProtoClass.foobar()), 'undefined');
+        ProtoClass.foobar('rwar');
+        t.equal(ProtoClass.foobar(), 'rwar');
+
+        t.equal(Foo.staticMethod(), 'yep!');
+        t.equal(typeof (Foo.foobar()), 'undefined');
+        Foo.foobar('rwar');
+        t.equal(Foo.foobar(), 'rwar');
+        t.equal(Foo.newStatic(), 'miaou');
 
         var foo_n = new Foo('a1', 'b2', 'c3'),
             foo = Foo('a1', 'b2', 'c3');
@@ -199,9 +252,16 @@ $(document).ready(function () {
             a: 'a1',
             b: 'b2',
             d: 'd4'
+        }).staticProps({
+            baseStatic: function () {
+                return 'base';
+            }
         });
 
         t.equal(Foo.mixin({
+            mixinStatic: function () {
+                return 'mixin';
+            },
             prototype: {
                 a: 'hello',
                 b: 'world',
@@ -210,6 +270,9 @@ $(document).ready(function () {
                 e: 'e5'
             }
         }), Foo, 'Calling mixin returns the original class');
+
+        t.equal(Foo.baseStatic(), 'base');
+        t.equal(Foo.mixinStatic(), 'mixin');
 
         var foo = Foo();
 
@@ -223,37 +286,48 @@ $(document).ready(function () {
     test('test Self#namespacing', function (t) {
         var ns = {
             Main: Self({
-                initialize: function (self) {
+                constructor: function (self) {
                     self.is_main = true;
-                    t.ok(self.__inst__, 'Is an instance');
+                    t.equal(self.__class__, ns.Main, 'Is an instance');
                     ns.Mixin.call(self, self);
                 },
                 mainMethod: function () {
                 }
+            }).staticProps({
+                mainStatic: function () {
+                    return 'main';
+                }
             }),
             Mixin: Self({
-                initialize: function (self, wanted_self) {
+                constructor: function (self, wanted_self) {
                     self.is_mixin = true;
                     t.equal(self, wanted_self, 'Got the self we wanted');
                 },
                 mixinMethod: function () {
                 }
+            }).staticProps({
+                mixinStatic: function () {
+                    return 'mixin';
+                }
             })
         };
         t.equal(ns.Main.mixin(ns.Mixin), ns.Main, 'Calling mixin returns the original class');
 
+        t.equal(ns.Main.mainStatic(), 'main');
+        t.equal(ns.Main.mixinStatic(), 'mixin');
+
         var obj = ns.Main();
         t.ok(obj.is_main, 'Called the Main constructor');
-        t.ok(obj.__inst__, 'Is an instance');
+        t.equal(obj.__class__, ns.Main, 'Is an instance');
         t.ok(obj.is_mixin, 'Called the Mixin constructor');
-        t.ok(typeof obj.mainMethod, 'function');
-        t.ok(typeof obj.mixinMethod, 'function');
+        t.equal(typeof obj.mainMethod, 'function');
+        t.equal(typeof obj.mixinMethod, 'function');
 
         var new_obj = new ns.Main();
         t.ok(new_obj.is_main, 'Called the Main constructor');
         t.ok(new_obj.is_mixin, 'Called the Mixin constructor');
-        t.ok(typeof new_obj.mainMethod, 'function');
-        t.ok(typeof new_obj.mixinMethod, 'function');
+        t.equal(typeof new_obj.mainMethod, 'function');
+        t.equal(typeof new_obj.mixinMethod, 'function');
     });
 
     test('test Self#backbone', function (t) {
@@ -263,6 +337,10 @@ $(document).ready(function () {
                 this.d = opts.d;
             }
         });
+
+        MyModel.modelStatic = function () {
+            return 'model';
+        };
 
         var model = new MyModel({a: 'a1', b: 'b2'}, {c: 'c3', d: 'd4'});
         t.equal(model.attributes.a, 'a1');
@@ -276,7 +354,14 @@ $(document).ready(function () {
                 self.e = opts.e;
                 self.f = opts.f;
             }
+        }).staticProps({
+            selfModelStatic: function () {
+                return 'self_model';
+            }
         });
+
+        t.equal(MySelfModel.modelStatic(), 'model');
+        t.equal(MySelfModel.selfModelStatic(), 'self_model');
 
         var self_model = new MySelfModel({a: 'a1', b: 'b2'},
             {c: 'c3', d: 'd4', e: 'e5', f: 'f6'});
