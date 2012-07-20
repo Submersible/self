@@ -21,7 +21,7 @@ test('test Self#intialization', function (t) {
 test('test Self#noInheritence', function (t) {
     var def = {
         _property: 123,
-        initialize: function (self, a, b, c) {
+        constructor: function (self, a, b, c) {
             t.equal(this, self);
             t.equal(a, 'a1');
             t.equal(b, 'b2');
@@ -80,7 +80,7 @@ test('test Self#noInheritence', function (t) {
 
 test('test Self#classInheritence', function (t) {
     var Foo = Self.extend({
-        initialize: function (self, a) {
+        constructor: function (self, a) {
             t.equal(this, self);
             self.a = a;
             t.equal(self.a, 'a1');
@@ -91,10 +91,10 @@ test('test Self#classInheritence', function (t) {
     t.equal(typeof Foo.mixin, 'function');
 
     var Bar = Foo.extend({
-        initialize: function (self, a, b) {
+        constructor: function (self, a, b) {
             t.equal(this, self);
             self.b = b;
-            Bar.__super__.initialize(a);
+            Bar.__super__.constructor(a);
             t.equal(self.a, 'a1');
             t.equal(self.b, 'b2');
         }
@@ -104,10 +104,10 @@ test('test Self#classInheritence', function (t) {
     t.equal(typeof Bar.mixin, 'function');
 
     var Hello = Bar.extend({
-        initialize: function (self, a, b, c) {
+        constructor: function (self, a, b, c) {
             t.equal(this, self);
             self.c = c;
-            Hello.__super__.initialize(a, b);
+            Hello.__super__.constructor(a, b);
             t.equal(self.a, 'a1');
             t.equal(self.b, 'b2');
             t.equal(self.c, 'c3');
@@ -118,10 +118,10 @@ test('test Self#classInheritence', function (t) {
     t.equal(typeof Hello.mixin, 'function');
 
     var World = Hello.extend({
-        initialize: function (self, a, b, c, d) {
+        constructor: function (self, a, b, c, d) {
             t.equal(this, self);
             self.d = d;
-            World.__super__.initialize(a, b, c);
+            World.__super__.constructor(a, b, c);
             t.equal(self.a, 'a1');
             t.equal(self.b, 'b2');
             t.equal(self.c, 'c3');
@@ -178,10 +178,10 @@ test('test Self#prototypalInheritence', function (t) {
     t.equal(proto.getValue(), 'foobar');
 
     var Foo = ProtoClass.extend({
-        initialize: function (self, a, b, c) {
+        constructor: function (self, a, b, c) {
             t.equal(this, self);
             self.c = c;
-            Foo.__super__.initialize(a, b);
+            Foo.__super__.constructor(a, b);
             t.equal(a, 'a1');
             t.equal(b, 'b2');
             t.equal(c, 'c3');
@@ -230,7 +230,7 @@ test('test Self#mixins', function (t) {
 test('test Self#namespacing', function (t) {
     var ns = {
         Main: Self({
-            initialize: function (self) {
+            constructor: function (self) {
                 self.is_main = true;
                 t.ok(self.__inst__, 'Is an instance');
                 ns.Mixin.call(self, self);
@@ -239,7 +239,7 @@ test('test Self#namespacing', function (t) {
             }
         }),
         Mixin: Self({
-            initialize: function (self, wanted_self) {
+            constructor: function (self, wanted_self) {
                 self.is_mixin = true;
                 t.equal(self, wanted_self, 'Got the self we wanted');
             },

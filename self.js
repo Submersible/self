@@ -72,7 +72,7 @@ var Self = (function () {
 
             // Call the Mixin constructor
             if (this && this.__inst__) {
-                Class.prototype.initialize.apply(this, arguments);
+                Class.prototype.constructor.apply(this, arguments);
                 return this;
             }
 
@@ -88,8 +88,8 @@ var Self = (function () {
             obj.__inst__ = true;
 
             // Call the constructor
-            if (typeof obj.initialize === 'function') {
-                obj.initialize.apply(obj, arguments);
+            if (typeof obj.constructor === 'function') {
+                obj.constructor.apply(obj, arguments);
             }
 
             // Return the constructed object if `new` keyword was not used.
@@ -103,7 +103,6 @@ var Self = (function () {
         Class.__super__ = Parent.prototype;
         Class.extend = makeExtendMethod(Class);
         Class.mixin = makeMixinMethod(Class);
-
 
         // Copy class definition into prototype
         for (key in def) {
@@ -163,31 +162,7 @@ var Self = (function () {
         Class.__super__ = Object.prototype;
         Class.extend = makeExtendMethod(Class);
         Class.mixin = makeMixinMethod(Class);
-
         Class.prototype = objectCreate(proto.prototype);
-        Class.prototype.initialize = function initialize() {
-            var ret;
-            // Backbone's constructors call `this.initialize`.  Therefore wrap
-            // the `initialize` function to prevent Backbone's constructor from
-            // getting stuck in an infinite loop.
-            if (!initialize._proto_hack) {
-                // Store current initialize function, and flag that we're in
-                // hack mode
-                initialize._proto_hack = true;
-                initialize._previous_init = this.initialize;
-                this.initialize = proto.prototype.initialize;
-
-                // Call the prototype's constructor
-                ret = proto.apply(this, arguments);
-
-                // Restore the initialize function
-                this.initialize = initialize._previous_init;
-                delete initialize._proto_hack;
-                delete initialize._previous_init;
-
-                return ret;
-            }
-        };
 
         return Class;
     };
