@@ -171,8 +171,9 @@ not already in the existing class will be copied in.
         defining static properties on a class.
 
 * `{Class Instance}` instantiated class object
-    * Self does not add any extra methods aside from what was passed into the
-      class definition.
+    * `.__class__` — The class that created this instance.
+    * `.__super__` — The parent class of this instance, same as
+      `.__class__.__super__`.
 
 ## Integrating With Other Forms of OOP
 
