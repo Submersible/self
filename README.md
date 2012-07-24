@@ -195,7 +195,7 @@ class definition.
 ### Backbone
 
 Backbone's `initialize` function is not the constructor.  It's a
-[call super method](http://en.wikipedia.org/wiki/Call_super), which gets called
+[template method](http://en.wikipedia.org/wiki/Template_method_pattern), which gets called
 by the real constructor.  So as long as you keep the constructor semantics the
 same, you'll be fine!
 
