@@ -27,6 +27,14 @@ var Self = (function () {
         };
     }
 
+    function keys(obj) {
+        var key, list = [];
+        for (key in obj) {
+            list.push(key);
+        }
+        return list;
+    }
+
     // Wrap an existing method so that it unshifts self onto the arguments
     function wrapMethodWithSelf(fn) {
         return function () {
@@ -138,7 +146,11 @@ var Self = (function () {
         // Copy class definition into prototype
         for (key in def) {
             if (!Object.hasOwnProperty(key)) {
-                if (typeof def[key] === 'function') {
+                if (
+                    typeof def[key] === 'function' &&
+                    keys(def[key]).length === 0 &&
+                    keys(def[key].prototype).length === 0
+                ) {
                     Class.prototype[key] = wrapMethodWithSelf(def[key]);
                 } else {
                     Class.prototype[key] = def[key];
@@ -152,7 +164,7 @@ var Self = (function () {
     // Manually setup the base class
     Self.__super__ = Object.prototype;
 
-    // For the sake of convenience, allow the Self.extend to instead directly 
+    // For the sake of convenience, allow the Self.extend to instead directly
     // inherit from a prototype, instead of the Self class itself.
     Self.extend = function (arg1, arg2) {
         // `arg1` is the class definition
