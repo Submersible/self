@@ -40,23 +40,27 @@ method with a subclass definition.  A class definition is an object containing
 properties and methods.  Attached to every class is a `__super__` property that
 points the parent class's prototype.
 
-    var Self = require('self');
+```javascript
+var Self = require('self');
 
-    var Animal = Self({
-    });
+var Animal = Self({
+});
 
-    var Dog = Animal.extend({
-    });
+var Dog = Animal.extend({
+});
 
-    var Beagle = Dog.extend({
-    });
+var Beagle = Dog.extend({
+});
 
-    Beagle.__super__ === Dog.prototype; // true
+Beagle.__super__ === Dog.prototype; // true
+```
 
 For JSLint compliance, a base class can be created using `Self.extend(...)`.
 
-    var Animal = Self.extend({
-    });
+```javascript
+var Animal = Self.extend({
+});
+```
 
 ### Constructors
 
@@ -64,34 +68,36 @@ The constructor for a class is the `constructor` method.  Inside the constructor
 function, parent and mixin constructors can be called.  The `new` keyword may be
 omitted when instantiating an object.
 
-    var Name = Self({
-        name_prefix: 'Sir',
-        constructor: function (self, name) {
+```javascript
+var Name = Self({
+    name_prefix: 'Sir',
+    constructor: function (self, name) {
+        self._name = name;
+    },
+    name: function (self, name) {
+        if (typeof name !== 'undefined') {
             self._name = name;
-        },
-        name: function (self, name) {
-            if (typeof name !== 'undefined') {
-                self._name = name;
-            }
-            return self.name_prefix + ' ' + self.name;
         }
-    });
+        return self.name_prefix + ' ' + self.name;
+    }
+});
 
-    var NameAge = Name.extend({
-        constructor: function (self, name, age) {
-            NameAge.__super__.constructor.call(self, name);
-            self.age = age;
-        },
-        age: function (self, age) {
-            if (typeof age !== 'undefined') {
-                self._age = age;
-            }
-            return self.age;
+var NameAge = Name.extend({
+    constructor: function (self, name, age) {
+        NameAge.__super__.constructor.call(self, name);
+        self.age = age;
+    },
+    age: function (self, age) {
+        if (typeof age !== 'undefined') {
+            self._age = age;
         }
-    });
+        return self.age;
+    }
+});
 
-    var name = new Name(),
-        name_age = NameAge();
+var name = new Name(),
+    name_age = NameAge();
+```
 
 ### Static Properties
 
@@ -101,19 +107,21 @@ when `extend` is called.  Defining a static property is as simple as setting
 a property on the class, or it can be done by using the sugar `.staticProps`
 method.
 
-    var Foo = Self({
-    }).staticProps({
-        classMethod: function () {
-            return 'ima class!';
-        }
-    });
+```javascript
+var Foo = Self({
+}).staticProps({
+    classMethod: function () {
+        return 'ima class!';
+    }
+});
 
-    var Bar = Foo.extend({
-    });
+var Bar = Foo.extend({
+});
 
-    Bar.otherStaticMethod = function () {
-        return 'ima static method on Bar!';
-    };
+Bar.otherStaticMethod = function () {
+    return 'ima static method on Bar!';
+};
+```
 
 ### Mixin
 
@@ -121,26 +129,28 @@ Mixins can be used for multiple inheritance.  To mixin a object of properties
 (not a class), call `<Class>.mixin(object)`.  When mixing in, only properties
 not already in the existing class will be copied in.
 
-    var Foo = Self({
-        _foo: 'foo',
-        constructor: function (self) {
-            console.log('Foo has been mixed in to: ' + self.name + '!');
-        },
-        foo: function (self, foo) {
-            if (typeof foo !== 'undefined') {
-                self._foo = foo;
-            }
-            return self._foo;
+```javascript
+var Foo = Self({
+    _foo: 'foo',
+    constructor: function (self) {
+        console.log('Foo has been mixed in to: ' + self.name + '!');
+    },
+    foo: function (self, foo) {
+        if (typeof foo !== 'undefined') {
+            self._foo = foo;
         }
-    });
+        return self._foo;
+    }
+});
 
-    var Bar = Self({
-        constructor: function (self) {
-            Foo.call(self);
-        }
-    });
+var Bar = Self({
+    constructor: function (self) {
+        Foo.call(self);
+    }
+});
 
-    Bar.mixin(Foo);
+Bar.mixin(Foo);
+```
 
 ## API
 
@@ -181,16 +191,20 @@ not already in the existing class will be copied in.
 
 A prototype can be manually wrapped with `Self.create`.
 
-    var EventEmitter = Self.create(require('events').EventEmitter);
+```javascript
+var EventEmitter = Self.create(require('events').EventEmitter);
+```
 
 Or use the shorthand and pass your base prototype as the first parameter in your
 class definition.
 
-    var Foobar = Self(EventEmitter, {
-        constructor: function (self) {
-            Foobar.__super__.constructor.call(self); // Calls EventEmitter's constructor
-        }
-    });
+```javascript
+var Foobar = Self(EventEmitter, {
+    constructor: function (self) {
+        Foobar.__super__.constructor.call(self); // Calls EventEmitter's constructor
+    }
+});
+```
 
 ### Backbone
 
@@ -199,16 +213,32 @@ Backbone's `initialize` function is not the constructor.  It's a
 by the real constructor.  So as long as you keep the constructor semantics the
 same, you'll be fine!
 
-    var MyModel = Self(Backbone.Model, {
-        initialize: function (self, attr, opts) {
-            MyModel.__super__.initialize.call(self, attr, opts);
-        }
-    });
+```javascript
+var MyModel = Self(Backbone.Model, {
+    initialize: function (self, attr, opts) {
+        MyModel.__super__.initialize.call(self, attr, opts);
+    }
+});
+```
+
+I recommend extending the Backbone library into your own `mvc` namespace, so
+you don't have to call self on the classes everytime.  It also provides a place
+for you to roll your own base class logic.
+
+```javascript
+var mvc = _.reduce(Backbone, function (obj, value, key) {
+    obj[key] = (value.prototype && _.keys(value.prototype).length) ? Self.create(value) : value;
+    return obj;
+}, {});
+
+mvc.Collection = mvc.Collection.extend({
+});
+```
 
 ## Performance
 
 Since Self.js wraps every method with a function that unshifts the context onto
-your method's arguments, there *is* overhead.  Yo u will have to weigh the
+your method's arguments, there *is* overhead.  You will have to weigh the
 performance impact vs the convenience of an explicit `self` variable.
 
 For me, an empty Self method is 2 orders of magnitude slower than an empty
