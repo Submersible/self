@@ -173,6 +173,8 @@ Wraps a prototypal constructor as a Self class, returning the created class.
 
 Property indicating the version of Self.
 
+----------
+
 ### Class static methods & properties 
 
 #### var inst = Class(args...)
@@ -195,6 +197,8 @@ Copies another class's definitions into the current class.
 #### Class.__super__
 
 Parent class
+
+----------
 
 ### Instance properties
 

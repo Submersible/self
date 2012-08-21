@@ -6,7 +6,7 @@
 var Self = (function () {
     'use strict';
 
-    var makeClass, objectCreate;
+    var makeClass, objectCreate, objectKeys;
 
     // Base class, and convenience function for extending the Base
     function Self() {
@@ -16,24 +16,21 @@ var Self = (function () {
     Self.VERSION = '1.0.0';
 
     // Create a new object based on the old one
-    // http://javascript.crockford.com/prototypal.html
-    if (typeof Object.create === 'function') {
-        objectCreate = Object.create;
-    } else {
-        objectCreate = function (o) {
-            function F() {}
-            F.prototype = o;
-            return new F();
-        };
-    }
+    objectCreate = Object.create || function (obj) {
+        function F() {}
+        F.prototype = obj;
+        return new F();
+    };
 
-    function keys(obj) {
+    objectKeys = Object.keys || function (obj) {
         var key, list = [];
         for (key in obj) {
-            list.push(key);
+            if (obj.hasOwnProperty(key)) {
+                list.push(key);
+            }
         }
         return list;
-    }
+    };
 
     // Wrap an existing method so that it unshifts self onto the arguments
     function wrapMethodWithSelf(fn) {
@@ -59,7 +56,8 @@ var Self = (function () {
             var key;
 
             for (key in Mixin) {
-                if (Mixin.hasOwnProperty(key) && key !== 'prototype' && key !== '__super__' && key !== 'extend' && key !== 'mixin' && key !== 'staticProps') {
+                if (Mixin.hasOwnProperty(key) && key !== 'prototype' &&
+                        key !== '__super__' && key !== 'extend' && key !== 'mixin' && key !== 'staticProps') {
                     Class[key] = Mixin[key];
                 }
             }
@@ -148,8 +146,8 @@ var Self = (function () {
             if (!Object.hasOwnProperty(key)) {
                 if (
                     typeof def[key] === 'function' &&
-                    keys(def[key]).length === 0 &&
-                    keys(def[key].prototype).length === 0
+                        objectKeys(def[key]).length === 0 &&
+                        objectKeys(def[key].prototype).length === 0
                 ) {
                     Class.prototype[key] = wrapMethodWithSelf(def[key]);
                 } else {
