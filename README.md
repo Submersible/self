@@ -1,4 +1,4 @@
-# Self — Python inspired class sugar! [![Build Status](https://secure.travis-ci.org/munro/self.png?branch=master)](http://travis-ci.org/munro/self)
+# Self—Python inspired class sugar! [![Build Status](https://secure.travis-ci.org/munro/self.png?branch=master)](http://travis-ci.org/munro/self)
 
 [Downloads](#downloads) – [Documentation](#documentation) – [API](#api) –
 [Integrating](#integrating-with-other-forms-of-oop) – [Performance](#performance)
@@ -105,7 +105,7 @@ var name = new Name(),
 ### Static Properties
 
 Static properties on a class will be inherited by the extending class.  Except
-they're not prototypal, so any static defitions will be copied to the child class
+they're not prototypal, so any static definitions will be copied to the child class
 when `extend` is called.  Defining a static property is as simple as setting
 a property on the class, or it can be done by using the sugar `.staticProps`
 method.
