@@ -186,15 +186,15 @@ Calling returns an instance of the class, passing any arguments to the
 
 Extends the class with a new class definition, returning the created class.
 
-#### Class === Class.staticProps(definition)
+#### Class.staticProps(definition) === Class
 
 Sugar method for defining static properties on a class.
 
-#### Class === Class.mixin(AnotherClass);
+#### Class.mixin(AnotherClass) === Class
 
 Copies another class's definitions into the current class.
 
-#### Class.__super__
+#### Class.\_\_super\_\_
 
 Parent class
 
@@ -202,11 +202,11 @@ Parent class
 
 ### Instance properties
 
-#### inst.__class__
+#### inst.\_\_class\_\_
 
 The class that created this instance.
 
-#### inst.__super__
+#### inst.\_\_super\_\_
 
 The parent class of this instance, same as `inst.__class__.__super__`.
 
