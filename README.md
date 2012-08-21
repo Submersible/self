@@ -154,36 +154,57 @@ Bar.mixin(Foo);
 
 ## API
 
-* `Self` module
-    * `Self({Object} definition)` — Shorthand for
-        `.extend({Object} definition)`.
-    * `Self({Object} prototype, {Object} definition)` — Shorthand for
-        `.extend(Self.create({Object} prototype), {Object} definition)`.
-    * `.VERSION` — Property indicating the version of Self.
-    * `.__super__` — Super prototype of `Self`, which is `Object.prototype`.
-    * `.extend({Object} definition) -> {Class}` — Extends the class with a new
-        class definition, returning the created class.
-    * `.mixin({Class})` — Copies another class's definitions into the Self base
-        class.
-    * `.create({Constructor}) -> {Class}` — Wraps a prototypal constructor as a
-        Self class, returning the created class.
+### Module
 
-* `{Class}` functor
-    * Calling returns `{Class Instance}`, passing any arguments to the
-        `constructor` method definition.
-    * `.__super__`
-    * `.extend({Object} definition) -> {Class}` — Same as above, extends the
-        class, returning the created class.
-    * `.mixin({Class}) -> {Class}` — Same as above, copies class definitions
-        from mixin class into the current class.  Returns the same class for
-        chaining.
-    * `.staticProps({Object} definition) -> {Class}` — Sugar method for
-        defining static properties on a class.
+#### var Class = Self(definition)
+#### var Class = Self.extend(definition)
 
-* `{Class Instance}` instantiated class object
-    * `.__class__` — The class that created this instance.
-    * `.__super__` — The parent class of this instance, same as
-      `.__class__.__super__`.
+Creates a new class.  `Self()` is shorthand for `Self.extend()`.
+
+#### var Class = Self(prototype, definition)
+
+Shorthand for `Self.extend(Self.create(prototype), definition)`.
+
+#### var Class = Self.create(prototype)
+
+Wraps a prototypal constructor as a Self class, returning the created class.
+
+#### Self.VERSION
+
+Property indicating the version of Self.
+
+### Class static methods & properties 
+
+#### var inst = Class(args...)
+
+Calling returns an instance of the class, passing any arguments to the
+`constructor` method.
+
+#### var Child = Class.extend(definition)
+
+Extends the class with a new class definition, returning the created class.
+
+#### Class === Class.staticProps(definition)
+
+Sugar method for defining static properties on a class.
+
+#### Class === Class.mixin(AnotherClass);
+
+Copies another class's definitions into the current class.
+
+#### Class.__super__
+
+Parent class
+
+### Instance properties
+
+#### inst.__class__
+
+The class that created this instance.
+
+#### inst.__super__
+
+The parent class of this instance, same as `inst.__class__.__super__`.
 
 ## Integrating With Other Forms of OOP
 
@@ -221,9 +242,9 @@ var MyModel = Self(Backbone.Model, {
 });
 ```
 
-I recommend extending the Backbone library into your own `mvc` namespace, so
-you don't have to call self on the classes everytime.  It also provides a place
-for you to roll your own base class logic.
+I recommend extending the Backbone library into your own namespace, so you don't
+have to call Self on the library everytime.  It also provides a place for you to
+roll your own base class logic.
 
 ```javascript
 var mvc = _.reduce(Backbone, function (obj, value, key) {
