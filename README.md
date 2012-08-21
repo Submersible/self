@@ -1,5 +1,8 @@
 # Self — Python inspired class sugar! [![Build Status](https://secure.travis-ci.org/munro/self.png?branch=master)](http://travis-ci.org/munro/self)
 
+[Downloads](#downloads) – [Documentation](#documentation) – [API](#api) –
+[Integrating](#integrating-with-other-forms-of-oop) – [Performance](#performance)
+
 ## Why another OOP abstraction?
 
 Self is class-based sugar inspired from Python syntax that's perfect for
