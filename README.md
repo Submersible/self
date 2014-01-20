@@ -1,4 +1,4 @@
-# Self—Python inspired class sugar! [![Build Status](https://secure.travis-ci.org/munro/self.png?branch=master)](http://travis-ci.org/munro/self)
+# Self—Python inspired class sugar! [![Build Status](https://secure.travis-ci.org/Submersible/self.png?branch=master)](http://travis-ci.org/munro/self)
 
 [Downloads](#downloads) – [Documentation](#documentation) – [API](#api) –
 [Integrating](#integrating-with-other-forms-of-oop) – [Performance](#performance)
