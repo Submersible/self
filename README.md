@@ -1,4 +1,4 @@
-# Self—Python inspired class sugar! [![Build Status](https://secure.travis-ci.org/Submersible/self.png?branch=master)](http://travis-ci.org/munro/self)
+# Self—Python inspired class sugar! [![Build Status](https://secure.travis-ci.org/Submersible/self.png?branch=master)](http://travis-ci.org/Submersible/self)
 
 [Downloads](#downloads) – [Documentation](#documentation) – [API](#api) –
 [Integrating](#integrating-with-other-forms-of-oop) – [Performance](#performance)
@@ -10,20 +10,22 @@ continuation-passing style.  No more `var that = this;`!  The implicit `this`
 variable is changed to an explicit `self` variable that your inner functions
 inherit.  Self plays nicely with existing prototypal, and Backbone OOP.
 
-    var Timer = Self(EventEmitter, {
-        count: 0,
-        constructor: function (self, interval) {
-            Timer.__super__.constructor.call(self);
+```javascript
+var Timer = Self(EventEmitter, {
+    count: 0,
+    constructor: function (self, interval) {
+        Timer.__super__.constructor.call(self);
 
-            setInterval(function () {
-                self.tick();
-            }, interval);
-        },
-        tick: function (self) {
-            self.count += 1;
-            self.emit('tick', self.count);
-        }
-    });
+        setInterval(function () {
+            self.tick();
+        }, interval);
+    },
+    tick: function (self) {
+        self.count += 1;
+        self.emit('tick', self.count);
+    }
+});
+```
 
 ## Downloads
 
